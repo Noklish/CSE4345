@@ -4,11 +4,11 @@ drop table if exists accounts;
 CREATE TABLE accounts (
 	userName varchar(30) UNIQUE DEFAULT 'user',
 	pass varchar(30) NOT NULL DEFAULT 'password',
-	Track varchar(20),
+	track varchar(20),
 	email varchar(50) NOT NULL,
 	userID int NOT NULL AUTO_INCREMENT,
-	first_name varchar(30),
-	last_name varchar(30),
+	firstName varchar(30),
+	lastName varchar(30),
 	PRIMARY KEY (userID)
 );
 

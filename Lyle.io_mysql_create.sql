@@ -1,4 +1,4 @@
-drop database LyleIO;
+drop database if exists LyleIO;
 create database LyleIO;
 USE LyleIO;
 

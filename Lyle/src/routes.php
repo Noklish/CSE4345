@@ -1,154 +1,224 @@
 <?php
-
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 // Routes
+$app->post('/login', function ($request, $response) {
+	$input = $request->getParsedBody();
+	$sth = $this->db->prepare("SELECT * FROM users WHERE email = :email AND pass = :pass");
+	$sth->bindParam("email", $input['email']);
+	$sth->bindParam("pass", $input['pass']);
+	$sth->execute();
+	if($sth->rowCount() != 0)
+	{
+		return $this->response->withJson(array("Successful Login",1));
+	}
+	else
+	{
+		return $this->response->withJson(array("Incorrect credentials; please try again",0));
+	}
+});
 
-$app->group('/api', function () use ($app) {
-    $app->get('/hello', function ($request, $response, $args) {
-        
-	debugToConsole('SUCCESS!');
-Return "Hello World";
-    });
-
- //    $app->get('/[{name}]', function (Request $request, Response $response, array $args) {
-	//     // Sample log message
-	//     $this->logger->info("Slim-Skeleton '/' route");
-
-	//     // Render index view
-	//     return $this->renderer->render($response, 'index.phtml', $args);
-	// });
-function debugToConsole($msg) { 
-        echo "<script>console.log(".json_encode($msg).")</script>";
-}
-
-    	$app->get('/users', function ($request, $response, $args) {	
+$app->group('/accounts', function () use ($app) {
+    $app->get('/users', function ($request, $response, $args) {	
 	//debugToConsole('REQUEST');
 	    $sth = $this->db->prepare(
-	        "SELECT * FROM Users ORDER BY userName"
-	    );
+	        "SELECT * FROM users ORDER BY userName"
+		);
 	    $sth->execute();
 	    $users = $sth->fetchAll();
 	    return $this->response->withJson($users);
 	});
 
-	$app->get('/user/[{userName}]', function ($request, $response, $args) {
+	$app->get('/user/[{userID}]', function ($request, $response, $args) {
 	    $sth = $this->db->prepare(
-	        "SELECT * FROM users WHERE userName=:userName"
+	        "SELECT * FROM users WHERE userID=:userID"
 	    );
-	    $sth->bindParam("userName", $args['userName']);
+	    $sth->bindParam("userID", $args['userID']);
 	    $sth->execute();
 	    $user = $sth->fetchObject();
 	    return $this->response->withJson($user);
 	});
 
-	$app->post('/user', function ($request, $response) {
+	$app->post('/newUser', function ($request, $response) {
 	    $input = $request->getParsedBody();
 	    $sql = "INSERT INTO 
-	        users (email, userName, passw) 
-	        VALUES (:email, :userName, :passw)";
+	        users (email, userName, pass, track, firstName, lastName) 
+	        VALUES (:email, :userName, :pass, :track, :firstName, :lastName)";
 	    $sth = $this->db->prepare($sql);
 	    $sth->bindParam("email", $input['email']);
 	    $sth->bindParam("userName", $input['userName']);
-	    $sth->bindParam("passw", $input['passw']);
+		$sth->bindParam("pass", $input['pass']);
+		$sth->bindParam("track", $input['track']);
+		$sth->bindParam("firstName", $input['firstName']);
+		$sth->bindParam("lastName", $input['lastName']);
 	    $sth->execute();
 	    return $this->response->withJson($input);
 	});
 
-	//get all data for one user
-	$app->get('/users/[{userName}]', function ($request, $response, $args){
-	    $sth = $this->db->prepare(
-	        "SELECT * FROM Users WHERE userName=:userName"
-	    );
-	    $sth->bindParam("userName", $args['userName']);
-	    $sth->execute();
-	    $user = $sth->fetchObject();
-	    return $this->response->withJson($user);
-	});
-
 	//return emails
-	$app->get('/email', function ($request, $response, $args){
+	$app->get('/emails', function ($request, $response, $args){
 	    $sth = $this->db->prepare(
-	        "SELECT email FROM Users"
+	        "SELECT email FROM users"
 	    );
 	    $sth->execute();
 	    $emails = $sth->fetchAll();
 	    return $this->response->withJson($emails);
 	});
 
-	//get password for an account
-	$app->get('/passW/[{email}]', function ($request, $response, $args){
-	    $sth = $this->db->prepare(
-	        "SELECT passW FROM Users WHERE email=:email"
-	    );
-	    $sth->bindParam("email", $args['email']);
-	    $sth->execute();
-	    $passW = $sth->fetchObject();
-	    return $this->response->withJsoon($passW);
-	});
+	$this->group('/{userID}', function () use ($app){
+		$app->get('/password', function ($request, $response, $args){
+			$sth = $this->db->prepare(
+				"SELECT pass FROM users WHERE userID=:userID"
+			);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			$passW = $sth->fetchObject();
+			return $this->response->withJson($passW);
+		});
 
-	//get all children associated with an individual email
-	// $app->get('/children/[{email}]', function ($request, $response, $args){
-	//     $sth = $this->db->prepare(
-	//         "SELECT * FROM Children WHERE parent=:email"
-	//     );
-	//     $sth->bindParam("email", $args['email'] + '.com');
-	//     $sth->execute();
-	//     $children = $sth->fetchObject();
-	//     return $this->response->withJson($children);
-	// });
-
-	//get all children associated with an individual username
-	$app->get('/children/[{userName}]', function ($request, $response, $args){
-	    $sth = $this->db->prepare(
-	        "SELECT * FROM Children WHERE parent=:userName"
-	    );
-	    $sth->bindParam("userName", $args['userName']);
-	    $sth->execute();
-	    $children = $sth->fetchObject();
-	    return $this->response->withJson($children);
-	});
-
-	//get all posts
-	$app->get('/posts', function ($request, $response, $args){
-	    $th = $this->db->prepare(
-	        "SELECT * FROM Posts"
-	    );
-	    $sth->execute();
-	    $posts = $sth->fetchAll();
-	    return $this->response->withJson($posts);
-	});
-
-	//gets a post based on the posting id
-	$app->get('/post/[{id}]', function ($request, $response, $args){
-	    $sth = $this->db->prepare(
-	        "SELECT * FROM Posts WHERE id=:id"
-	    );
-	    $sth->bindParam("id", $args['id']);
-	    $sth->execute();
-	    $post = $sth->fetchObject();
-	    return $this->response->withJson($post);
-	});
-
-	//get all comments
-	$app->get('/comments', function ($request, $response, $args){
-	    $th = $this->db->prepare(
-	        "SELECT * FROM Comments"
-	    );
-	    $sth->execute();
-	    $comments = $sth->fetchAll();
-	    return $this->response->withJson($comments);
-	});
+		$app->put('/update', function ($request, $response) {
+			$input = $request->getParsedBody();
+			$sth = $this->db->prepare("UPDATE users SET 
+			email = :email,
+			userName = :userName, 
+			pass = :pass, 
+			track = :track,
+			firstName = :firstName, 
+			lastName = :lastName
+			WHERE userID = :userID");
+			$sth->bindParam("email", $input['email']);
+			$sth->bindParam("userName", $input['userName']);
+			$sth->bindParam("pass", $input['pass']);
+			$sth->bindParam("track", $input['track']);
+			$sth->bindParam("firstName", $input['firstName']);
+			$sth->bindParam("lastName", $input['lastName']);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			return $this->response->withJson($input);
+		});
 	
-	//gets a comment based on the posting id
-	$app->get('/comment/[{id}]', function ($request, $response, $args){
-	    $sth = $this->db->prepare(
-	        "SELECT * FROM Comments WHERE id=:id"
-	    );
-	    $sth->bindParam("id", $args['id']);
+		$app->get('/posts', function ($request, $response, $args){
+			$sth = $this->db->prepare(
+				"SELECT title, body FROM posts WHERE userID=:userID"
+			);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			$posts = $sth->fetchObject();
+			return $this->response->withJson($posts);
+		});
+
+		$app->delete('/deletePost', function($request, $response){
+			$input = $request->getParsedBody();
+			$sth = $this->db->prepare("DELETE FROM posts WHERE postID = :postID AND userID = :userID");
+			$sth->bindParam("postID", $input['postID']);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			return $this->response->withJson($input);
+		});
+
+		$app->get('/comments', function ($request, $response, $args){
+			$sth = $this->db->prepare(
+				"SELECT p.title, m.body FROM posts p join messages m on p.postID = m.postID WHERE m.userID=:userID"
+			);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			$posts = $sth->fetchObject();
+			return $this->response->withJson($posts);
+		});
+
+		$app->delete('/deleteComment', function($request, $response){
+			$input = $request->getParsedBody();
+			$sth = $this->db->prepare("DELETE FROM messages WHERE msgID = :msgID AND userID = :userID");
+			$sth->bindParam("msgID", $input['msgID']);
+			$sth->bindParam("userID", $args['userID']);
+			$sth->execute();
+			return $this->response->withJson($input);
+		});
+	});
+});
+
+$app->group('/forums', function () use ($app) {
+	$app->get('/', function ($request, $response, $args){
+		$sth = $this->db->prepare(
+			"SELECT * FROM forums"
+		);
+		$sth->execute();
+		$forumList = $sth->fetchObject();
+		return $this->response->withJson($forumList);
+	});
+
+	$app->post('/newForum', function ($request, $response) {
+	    $input = $request->getParsedBody();
+	    $sql = "INSERT INTO 
+	        forums (forumName) 
+			VALUES (:forumName)";
+	    $sth = $this->db->prepare($sql);
+	    $sth->bindParam("forumName", $input['forumName']);
 	    $sth->execute();
-	    $comment = $sth->fetchObject();
-	    return $this->response->withJson($comment);
+	    return $this->response->withJson($input);
+	});
+
+	$this->group('/{forumID}', function () use ($app) {
+		//get all posts
+		$app->get('/all', function ($request, $response, $args){
+			$sth = $this->db->prepare(
+				"SELECT * FROM posts WHERE forumID = :forumID"
+			);
+			$sth->bindParam("forumID", $args['forumID']);
+			$sth->execute();
+			$posts = $sth->fetchAll();
+			return $this->response->withJson($posts);
+		});
+			
+		$app->post('/newPost', function ($request, $response, $args) {
+			$input = $request->getParsedBody();
+			$sql = "INSERT INTO 
+				posts (title, body, forumID, userID) 
+				VALUES (:title, :body, :forumID, :userID)";
+			$sth = $this->db->prepare($sql);
+			$sth->bindParam("forumID", $args['forumID']);
+			$sth->bindParam("title", $input['title']);
+			$sth->bindParam("body", $input['body']);
+			$sth->bindParam("userID", $input['userID']);
+			$sth->execute();
+			return $this->response->withJson($input);
+		});
+	
+		$this->group('/{postID}', function () use ($app) {
+			//gets a post based on the posting id
+			$app->get('/', function ($request, $response, $args){
+				$sth = $this->db->prepare(
+					"SELECT * FROM posts WHERE postID=:postID"
+				);
+				$sth->bindParam("postID", $args['postID']);
+				$sth->execute();
+				$post = $sth->fetchObject();
+				return $this->response->withJson($post);
+			});
+
+			$app->get('/comments', function ($request, $response, $args){
+				$sth = $this->db->prepare(
+					"SELECT * FROM messages WHERE postID=:postID"
+				);
+				$sth->bindParam("postID", $args['postID']);
+				$sth->execute();
+				$post = $sth->fetchObject();
+				return $this->response->withJson($post);
+			});
+
+			$app->post('/newComment', function ($request, $response, $args){
+				$input = $request->getParsedBody();
+				$sth = $this->db->prepare(
+					"INSERT INTO messages (postID, body, userID)
+					VALUES (:postID, :body, :userID)"
+				);
+				$sth->bindParam("postID", $args['postID']);
+				$sth->bindParam("body", $input['body']);
+				$sth->bindParam("userID", $input['userID']);
+				$sth->execute();
+				return $this->response->withJson($input);
+			});
+		});
 	});
 });

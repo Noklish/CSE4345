@@ -3,7 +3,7 @@ create database LyleIO;
 USE LyleIO;
 
 drop table if exists Users;
-CREATE TABLE Users (
+CREATE TABLE users (
 	userName varchar(30) UNIQUE DEFAULT 'user',
 	pass varchar(30) NOT NULL DEFAULT 'password',
 	track varchar(20),
@@ -22,7 +22,7 @@ CREATE TABLE forums (
 );
 
 drop table if exists Posts;
-CREATE TABLE Posts (
+CREATE TABLE posts (
 	postID int NOT NULL AUTO_INCREMENT,
 	title varchar(128) NOT NULL DEFAULT 'New Post',
 	body varchar(1024) NOT NULL DEFAULT 'Body',

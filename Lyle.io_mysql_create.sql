@@ -29,7 +29,7 @@ CREATE TABLE posts (
 	forumID int NOT NULL,
 	userID int NOT NULL,
 	PRIMARY KEY (postID),
-	FOREIGN KEY (userID) REFERENCES Users(userID),
+	FOREIGN KEY (userID) REFERENCES users(userID),
 	FOREIGN KEY(forumID) REFERENCES forums(forumID)
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE messages (
 	body varchar(512) NOT NULL,
 	userID int NOT NULL,
 	PRIMARY KEY (msgID),
-	FOREIGN KEY (userID) REFERENCES Users(userID),
-	FOREIGN KEY(postID) REFERENCES Posts(postID)
+	FOREIGN KEY (userID) REFERENCES users(userID),
+	FOREIGN KEY(postID) REFERENCES posts(postID)
 );
 

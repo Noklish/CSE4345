@@ -8,6 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import { ChatBoardComponent } from './chat-board/chat-board.component';
 import { CommentsComponent } from './chat-board/comments/comments.component';
 import { HomeComponent } from './home/home.component';
+import { ProfileUpdateComponent } from './profile-update/profile-update.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { HomeComponent } from './home/home.component';
     HeaderComponent,
     ChatBoardComponent,
     CommentsComponent,
-    HomeComponent
+    HomeComponent,
+    ProfileUpdateComponent
   ],
   imports: [
     BrowserModule

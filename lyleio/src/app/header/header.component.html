@@ -1,23 +1,43 @@
 <div class="">
   <div class="row no-gutters" id="headerBackground">
-    <div class="col-1.5 ">
-      <div>
-        <img src="../../assets/header/avatars/adsfasf.png" alt="profilePicture" class="img-responsive" style="width: 150px;">
+    <div class="col-1.5">
+      <div style="max-width: 162px;">
+        <img src="../../assets/header/avatars/adsfasf.png" alt="profilePicture" class="img-fluid" >
       </div>
     </div>
 
     <div class="col d-flex justify-content-start">
-        <div class="">
-            <img src="../../assets/header/flags/saudi.png" alt="flag" class="img-responsive pl-2 pt-2" style="width: 50px;">
-            <div class=" pl-2 pt-3 text-white">
+        <div class=" pr-3">
+          <div class="row ">
+            <div class="col d-flex justify-content-start">
+              <div>
+                  <img src="../../assets/header/flags/saudi.png" alt="flag" class="img-fluid pl-2 pt-2" style="width: 50px;">
+              </div>
+
+              <div class="flex-column pl-2">
+                <div>
+                    <a routerLink="/profileUpdate">Update</a>
+                </div>
+                <div>
+                    <a routerLink="/logout">Logout</a>
+
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+
+
+            <!-- (click)="toProfileUpdate()" -->
+            <div class="  pl-2 pt-3 text-white">
             <p class="lines">Ahmed Hadi</p>
             <p class="lines">CSE</p>
             <p class="lines">Senior</p>
             <p class="lines">Cyber Security</p>
           </div>
-          </div>
+        </div>
     </div>
-
 
     <!-- <div class="col-6  ">
 
@@ -46,8 +66,8 @@
         </div>
     </div> -->
 
-<div class="col-1.5 d-flex justify-content-end ">
-  <div class="border border-primary pt-3 " id="smuHeaderLogo" style="max-width: 100px;">
+<div class="col-1.5 d-flex justify-content-end">
+  <div class="border border-primary pt-4 " id="smuHeaderLogo" style="max-width: 100px;">
     <img src="../../assets/header/headerSMUlogo.png" alt="headerLogo" class="img-fluid">
   </div>
 </div>

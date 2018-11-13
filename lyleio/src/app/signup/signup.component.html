@@ -14,10 +14,14 @@
 
             <form>
               <div class="form-group">
-            <input class="form-control mb-2 mt-3" type="text" name="firstName" placeholder="First Name">
+            <input class="form-control mb-2 mt-3" type="text" name="firstName" placeholder="First Name" required ngModel>
             <input class="form-control mb-2" type="text" name="lastName" placeholder="Last Name">
             <input class="form-control mb-2" type="text" name="userName" placeholder="User Name">
-            <input class="form-control mb-2" type="email" name="email" placeholder="Email">
+            <input class="form-control mb-2" type="email" name="email" placeholder="Email" email required ngModel>
+
+            <span class="help-block">Please enter a valid email adderss!</span>
+            <!-- *ngIf="!emailAddress.valid && emailAddress.touched" -->
+
             <select class="form-control mb-2" >
                 <option class="selected">Choose Track</option>
               <option>Cyber Secuirty</option>

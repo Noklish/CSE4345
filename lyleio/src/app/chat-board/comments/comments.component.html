@@ -1,3 +1,4 @@
+
 <form > <!--(onsubmit)="onCreatePost(f)" "#f=ngForm"-->
   <!-- (onSubmit)="onEnter(f)" #f="ngForm" *ngIf="postId" -->
   <div class="input-group input-group-sm">
@@ -15,18 +16,19 @@
       class="form-control"
       aria-label="Small"
       aria-describedby="inputGroup-sizing-sm"
+      placeholder="write comments here and hit enter"
       ngModel
       required
       >
       <!-- (keyup.enter)="onEnter(f)" -->
   </div>
-  <div class="collapse show" >
+  <div class="collapse show">
       <!-- id="{{postId}}" -->
     <ul class="list-group">
       <li class="list-group-item">
           <!-- *ngFor="let comment of commentArr">{{ comment.body }} -->
         <div class="input-group-prepend float-right">
-          <span class="input-group-text" id="inputGroup-sizing-sm"></span>
+          <span class="input-group-text" id="inputGroup-sizing-sm">User Name</span>
           <!-- {{ comment.userName }} -->
         </div>
       </li>
